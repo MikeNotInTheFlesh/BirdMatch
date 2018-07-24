@@ -25,7 +25,7 @@ function Button(x, y, w, h, id) {
     textAlign(CENTER, CENTER);
     textSize(this.h / 1.5);
     fill(255);
-    text(6 + 2 * this.id, this.x + this.w / 2, this.y + this.h / 2.5);
+    text(8 + 2 * this.id, this.x + this.w / 2, this.y + this.h / 2.5);
     pop();
   }
   
@@ -39,7 +39,7 @@ function Button(x, y, w, h, id) {
   }
   
   this.action = function() {
-    newGame(6 + 2 * this.id);
+    newGame(8 + 2 * this.id);
   }
 }
 
