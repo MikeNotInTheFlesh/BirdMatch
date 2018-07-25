@@ -135,23 +135,8 @@ function draw() {
 	  push();
 	  imageMode(CENTER);
 	  image(thumbsUp, width / 2, height / 2, width / 4, width / 4);
-	  fill(85);
-	  textSize(min(width, height) / 10);
-	  textAlign(CENTER, CENTER);
-	  for (let card of cards){
-		  if (card.visible){
-			  let birdName = birds[card.id];
-			  let birdNames = [];
-			  birdNames = birdName.split("_");
-			  for (let i = 0; i < birdNames.length; i++){
-				birdNames[i] = birdNames[i].charAt(0).toUpperCase() + birdNames[i].substr(1);
-			  }
-			  birdName = birdNames.join(" ");
-			  text(birdName, width / 2, height / 2);
-			  break;
-		  }
-	  }
 	  pop();
+	  showName();
   }
   
 }
@@ -304,9 +289,9 @@ function checkGuess(id){
 }
 
 function hideCards() {
-	for (let call of calls) {
-		call.stop();
-	}
+	// for (let call of calls) {
+		// call.stop();
+	// }
   for (let card of cards) {
     card.visible = false;
   }
@@ -377,4 +362,25 @@ function newGame(tempNumCards) {
   hideCardsTimer = 0;
   winFlag = false;
   score = 0;
+}
+
+function showName() {
+	push();
+	fill(85);
+	  textSize(min(width, height) / 10);
+	  textAlign(CENTER, CENTER);
+	  for (let card of cards){
+		  if (card.visible){
+			  let birdName = birds[card.id];
+			  let birdNames = [];
+			  birdNames = birdName.split("_");
+			  for (let i = 0; i < birdNames.length; i++){
+				birdNames[i] = birdNames[i].charAt(0).toUpperCase() + birdNames[i].substr(1);
+			  }
+			  birdName = birdNames.join(" ");
+			  text(birdName, width / 2, height / 2);
+			  break;
+		  }
+	  }
+	  pop();
 }
