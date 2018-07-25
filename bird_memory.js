@@ -135,6 +135,22 @@ function draw() {
 	  push();
 	  imageMode(CENTER);
 	  image(thumbsUp, width / 2, height / 2, width / 4, width / 4);
+	  fill(85);
+	  textSize(min(width, height) / 10);
+	  textAlign(CENTER, CENTER);
+	  for (let card of cards){
+		  if (card.visible){
+			  let birdName = birds[card.id];
+			  let birdNames = [];
+			  birdNames = birdName.split("_");
+			  for (let i = 0; i < birdNames.length; i++){
+				birdNames[i] = birdNames[i].charAt(0).toUpperCase() + birdNames[i].substr(1);
+			  }
+			  birdName = birdNames.join(" ");
+			  text(birdName, width / 2, height / 2);
+			  break;
+		  }
+	  }
 	  pop();
   }
   
