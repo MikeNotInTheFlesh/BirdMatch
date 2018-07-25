@@ -298,9 +298,9 @@ function hideCards() {
 }
 
 function correctGuess() {
-	for (let call of calls) {
-		call.stop();
-	}
+	// for (let call of calls) {
+		// call.stop();
+	// }
   if (cards.length == 2) {
     winFlag = true;
 	if (soundIcon.mode == 'on'){
