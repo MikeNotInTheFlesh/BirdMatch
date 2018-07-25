@@ -337,6 +337,7 @@ function winner() {
   text("score: " + score, width / 2, height / 2);
   //text("seconds: "+ str(timer / 30), width / 2, height / 2);
   textAlign(CENTER, CENTER);
+  fill(245);
   text("Start New Game", width / 2, height / 16);
   if (! localStorage.getItem("highScore" + numCards)  || localStorage.getItem("highScore" + numCards) < score) {
 	  localStorage.setItem("highScore" + numCards, score);
