@@ -32,12 +32,15 @@ function setup() {
   createCanvas(window.innerWidth * 1, window.innerHeight * 1);
   frameRate(30);
   
-  cardW = min(height, width) ;
+  cardW = min(height, width);
   createBoard(cardW);
   myFont = loadFont('data/impact.ttf');
   textFont(myFont);
   cardBack = loadImage("data/cardBack.jpg");
+  backRed = loadImage("data/backRed.jpg");
+  backBlue = loadImage("data/backBlue.jpg");
   tableCloth = loadImage("data/tableCloth.jpg");
+  tableCloth.resize(width, height);
   musicImage = loadImage("data/musicImage.png");
   soundOn = loadImage("data/soundOn.gif");
   soundOff = loadImage("data/soundOff.gif");
@@ -69,7 +72,7 @@ function setup() {
     "wood_thrush"
   ]
   
-  // WE SHOULD SHUFFLE THE IMAGES HERE
+  // We shuffle the images here
   birds = shuffle(birds);
   for (let i = 0; i < numCards; i++) {
 	  pics[i] = loadImage("data/pics/" + birds[i] + ".jpg");
@@ -81,9 +84,8 @@ function setup() {
 
 function draw() {
   background(0, 50, 120, 255);
-  fill(255, 255, 255, 255);
+  fill(255);
   imageMode(CORNER);
-  tableCloth.resize(width, height);
   background(tableCloth);
   
   if (! winFlag) {
