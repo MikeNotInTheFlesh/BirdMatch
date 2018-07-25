@@ -15,6 +15,7 @@ var score = 0;
 var timerDelay = 180;
 var picIds = [];
 var songIds = [];
+var cardW;
 
 function preload() {
 	// soundFormats('mp3');
@@ -31,7 +32,8 @@ function setup() {
   createCanvas(window.innerWidth * 1, window.innerHeight * 1);
   frameRate(30);
   
-  createBoard();
+  cardW = min(height, width) ;
+  createBoard(cardW);
   myFont = loadFont('data/impact.ttf');
   textFont(myFont);
   cardBack = loadImage("data/cardBack.jpg");
@@ -84,14 +86,6 @@ function draw() {
   tableCloth.resize(width, height);
   background(tableCloth);
   
-  if (localStorage.getItem("highScore" + numCards)){
-	  push();
-	  textAlign(LEFT, TOP);
-	  textSize(min(width, height) / 30);
-	  text("High score: " + localStorage.getItem("highScore" + numCards), 5, 5);
-	  pop();
-  }
-  
   if (! winFlag) {
     timer += 1;
   }
@@ -123,6 +117,15 @@ function draw() {
   
   soundIcon.show();
   
+    if (localStorage.getItem("highScore" + numCards)){
+	  push();
+	  fill(255);
+	  textAlign(LEFT, TOP);
+	  textSize(min(width, height) / 30);
+	  text("High score: " + localStorage.getItem("highScore" + numCards), 5, 5);
+	  pop();
+  }
+  
   if (hideCardsTimer > 0) {
 	  push();
 	  imageMode(CENTER);
@@ -137,16 +140,18 @@ function draw() {
   
 }
 
-function createBoard() {
+function createBoard(cardWidth) {
+	this.cardWidth = cardWidth;
   var nextX, nextY, gap;
-  var cardWidth = min(height, width) / sqrt (2 * numCards);
-  gap = cardWidth / 6;
+  // var cardWidth = min(height, width) / (sqrt (2 * (numCards + numCards / 10)) );
+  gap = this.cardWidth / 10;
   nextX = gap;
   nextY = gap;
   var maxX = 0;
   ids = [];
   picIds = [];
   songIds = [];
+  cards = [];
   
   // make a list of ids
   for (let i = 0; i < numCards * 2; i++) {
@@ -192,7 +197,7 @@ function createBoard() {
 	  }
 	  if (cards[0].x < width - (maxX + cards[0].w + gap / 2)) {
 		  for (let card of cards) {
-			  card.x += gap / 8;
+			  card.x += gap / 10;
 		  }
 	  } else {
 		  break;
@@ -202,8 +207,13 @@ function createBoard() {
   // center the y axis
   while (cards[0].y < height - (cards[cards.length - 1].y + cards[0].h + gap)) {
 	  for (let card of cards) {
-		  card.y += gap / 8;
+		  card.y += gap / 10;
 	  }
+  }
+  // Resize cards if they don't fit
+  if (cards[cards.length - 1].y + cards[0].h > height){
+	cardW *= 0.9;
+	createBoard(cardW);
   }
 }
 
