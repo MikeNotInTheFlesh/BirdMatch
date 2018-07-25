@@ -308,9 +308,9 @@ function correctGuess() {
 	}
     return;
   }
-  for (let call of calls) {
-		call.stop();
-	}
+  // for (let call of calls) {
+		// call.stop();
+	// }
   for (let i = cards.length - 1; i >= 0; i--) {
     if (cards[i].id == firstGuessId) {
       cards.splice(i, 1);
