@@ -32,7 +32,7 @@ function setup() {
   createCanvas(window.innerWidth * 1, window.innerHeight * 1);
   frameRate(30);
   
-  cardW = min(height, width);
+  cardW = min(height, width) ;
   createBoard(cardW);
   myFont = loadFont('data/impact.ttf');
   textFont(myFont);
@@ -40,8 +40,8 @@ function setup() {
   backRed = loadImage("data/backRed.jpg");
   backBlue = loadImage("data/backBlue.jpg");
   tableCloth = loadImage("data/tableCloth.jpg");
-  tableCloth.resize(width, height);
   musicImage = loadImage("data/musicImage.png");
+  musicNote = loadImage("data/musicNote.png");
   soundOn = loadImage("data/soundOn.gif");
   soundOff = loadImage("data/soundOff.gif");
   thumbsUp = loadImage("data/thumbsUp.png");
@@ -57,6 +57,7 @@ function setup() {
   
   birds = [
     "american_crow",
+	"american_goldfinch",
     "american_robin",
     "american_tree_sparrow",
     "black-throated_sparrow",
@@ -67,12 +68,13 @@ function setup() {
     "mallard",
 	"northern_cardinal",
     "purple_finch",
+	"red_bellied_woodpecker",
     "trumpeter_swan",
     "wood_duck",
     "wood_thrush"
   ]
   
-  // We shuffle the images here
+  // WE SHOULD SHUFFLE THE IMAGES HERE
   birds = shuffle(birds);
   for (let i = 0; i < numCards; i++) {
 	  pics[i] = loadImage("data/pics/" + birds[i] + ".jpg");
@@ -84,8 +86,9 @@ function setup() {
 
 function draw() {
   background(0, 50, 120, 255);
-  fill(255);
+  fill(255, 255, 255, 255);
   imageMode(CORNER);
+  tableCloth.resize(width, height);
   background(tableCloth);
   
   if (! winFlag) {
@@ -119,27 +122,24 @@ function draw() {
   
   soundIcon.show();
   
-    if (localStorage.getItem("highScore" + numCards)){
-	  push();
-	  fill(255);
-	  textAlign(LEFT, TOP);
-	  textSize(min(width, height) / 30);
-	  text("High score: " + localStorage.getItem("highScore" + numCards), 5, 5);
-	  pop();
+  if (localStorage.getItem("highScore" + numCards)){
+	push();
+	fill(255);
+	textAlign(LEFT, TOP);
+	textSize(min(width, height) / 30);
+	text("High score: " + localStorage.getItem("highScore" + numCards), 5, 5);
+	pop();
   }
   
+  push();
+  imageMode(CENTER);
   if (hideCardsTimer > 0) {
-	  push();
-	  imageMode(CENTER);
 	  image(thumbsDown, width / 2, height / 2, width / 4, width / 4);
-	  pop();
   } else if (correctGuessTimer > 0) {
-	  push();
-	  imageMode(CENTER);
 	  image(thumbsUp, width / 2, height / 2, width / 4, width / 4);
-	  pop();
 	  showName();
   }
+  pop();
   
 }
 
@@ -234,15 +234,15 @@ function mousePressed() {
 		if (hideCardsTimer < timerDelay * 2 - 6) {
 			hideCardsTimer = 1;
 		}
-		return;
+		return false;
 	} else if (correctGuessTimer > 0 && hideCardsTimer < timerDelay - 6) {
 		if (correctGuessTimer < timerDelay * 2 - 6) {
 			correctGuessTimer = 1;
 		}
-		return;
+		return false;
 		// bug fix. Starting a new game would select the first card.
 	} else if (timer < 5) {
-		return;
+		return false;
 	}
 	
 	// Did someone click a card?
@@ -253,13 +253,15 @@ function mousePressed() {
     ){
       cards[i].visible = true;
       checkGuess(cards[i].id);
-	  if(cards[i].song && soundIcon) {
+	  if(cards[i].song && soundIcon.mode == 'on') {
 		  for (let call of calls) {
-			call.stop();
+			  if (call.isPlaying()) {
+			    call.stop();
+			  }
 		  }
 		  calls[cards[i].id].play();
 	  }
-      return;
+      return false;
     }
 	}
 	if (
@@ -270,6 +272,7 @@ function mousePressed() {
   ) {
     soundIcon.change();
   }
+  return false;
 }
 
 function checkGuess(id){
@@ -291,18 +294,22 @@ function checkGuess(id){
 }
 
 function hideCards() {
-	// for (let call of calls) {
-		// call.stop();
-	// }
+	for (let call of calls) {
+	  if (call.isPlaying()) {
+	    call.stop();
+	  }
+	}
   for (let card of cards) {
     card.visible = false;
   }
 }
 
 function correctGuess() {
-	// for (let call of calls) {
-		// call.stop();
-	// }
+	for (let call of calls) {
+	  if (call.isPlaying()) {
+	    call.stop();
+	  }
+	}
   if (cards.length == 2) {
     winFlag = true;
 	if (soundIcon.mode == 'on'){
@@ -310,9 +317,11 @@ function correctGuess() {
 	}
     return;
   }
-  // for (let call of calls) {
-		// call.stop();
-	// }
+	for (let call of calls) {
+	  if (call.isPlaying()) {
+	    call.stop();
+	  }
+	}
   for (let i = cards.length - 1; i >= 0; i--) {
     if (cards[i].id == firstGuessId) {
       cards.splice(i, 1);
@@ -337,7 +346,6 @@ function winner() {
   text("score: " + score, width / 2, height / 2);
   //text("seconds: "+ str(timer / 30), width / 2, height / 2);
   textAlign(CENTER, CENTER);
-  fill(245);
   text("Start New Game", width / 2, height / 16);
   if (! localStorage.getItem("highScore" + numCards)  || localStorage.getItem("highScore" + numCards) < score) {
 	  localStorage.setItem("highScore" + numCards, score);
@@ -370,8 +378,10 @@ function newGame(tempNumCards) {
 function showName() {
 	push();
 	fill(85);
-	  textSize(min(width, height) / 10);
-	  textAlign(CENTER, CENTER);
+	textSize(min(width, height) / 10);
+	textAlign(CENTER, CENTER);
+	stroke(0);
+	strokeWeight(textSize);
 	  for (let card of cards){
 		  if (card.visible){
 			  let birdName = birds[card.id];
